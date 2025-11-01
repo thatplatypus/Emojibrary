@@ -7,14 +7,10 @@ const config = {
 
 	kit: {
 		adapter: adapter({
-			pages: 'build',
-			assets: 'build',
-			fallback: undefined,
-			precompress: false,
-			strict: true
+			fallback: undefined
 		}),
 		paths: {
-			base: process.env.BASE_PATH || ''
+			base: '/Emojibrary'
 		}
 	}
 };

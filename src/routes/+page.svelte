@@ -3,6 +3,7 @@
 	import { emojis, loading, error, loadEmojis } from '$lib/stores/emoji';
 	import type { Emoji } from '$lib/types/emoji';
 	import Header from '$lib/components/Header.svelte';
+	import { base } from '$app/paths';
 
 	let searchQuery = $state('');
 	let selectedCategory = $state<string | null>(null);
@@ -118,7 +119,7 @@
 				<div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
 					{#each filteredEmojis() as emoji}
 						<a
-							href="/{encodeURIComponent(emoji.char)}"
+							href="{base}/{encodeURIComponent(emoji.char)}"
 							class="card bg-base-200 hover:bg-base-300 transition-colors p-4 text-center cursor-pointer no-underline"
 							title="{emoji.name}"
 						>

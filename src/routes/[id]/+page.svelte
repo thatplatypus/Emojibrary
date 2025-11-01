@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { base } from '$app/paths';
 	import { emojis, loading, loadEmojis } from '$lib/stores/emoji';
 	import type { Emoji } from '$lib/types/emoji';
 	import Header from '$lib/components/Header.svelte';
@@ -48,7 +49,7 @@
 					<div class="text-6xl mb-4">😕</div>
 					<h1 class="text-3xl font-bold mb-2">Emoji Not Found</h1>
 					<p class="text-lg opacity-70 mb-6">The emoji you're looking for doesn't exist in our library.</p>
-					<button class="btn btn-primary" onclick={() => goto('/')}>
+					<button class="btn btn-primary" onclick={() => goto(`${base}/`)}>
 						Back to Home
 					</button>
 				</div>
@@ -109,7 +110,7 @@
 							>
 								Copy Emoji
 							</button>
-							<button class="btn btn-outline" onclick={() => goto('/')}>
+							<button class="btn btn-outline" onclick={() => goto(`${base}/`)}>
 								Back to Home
 							</button>
 						</div>

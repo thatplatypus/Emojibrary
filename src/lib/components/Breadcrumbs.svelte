@@ -1,9 +1,13 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { base } from '$app/paths';
 	import { emojis } from '$lib/stores/emoji';
 	import type { Emoji } from '$lib/types/emoji';
 
-	const isHome = $derived($page.url.pathname === '/');
+	const isHome = $derived(() => {
+		const pathname = $page.url.pathname;
+		return pathname === base || pathname === `${base}/` || pathname === '/';
+	});
 	
 	const emoji = $derived.by(() => {
 		if (isHome) return null;
@@ -28,7 +32,7 @@
 	<div class="breadcrumbs mb-4">
 		<ul>
 			<li>
-				<a href="/" class="flex items-center gap-2">
+				<a href="{base}/" class="flex items-center gap-2">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
