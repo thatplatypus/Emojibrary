@@ -35,7 +35,7 @@
 			</svg>
 		</label>
 	</div>
-	<h1 class="text-5xl font-bold mb-2">🎨 Emojibrary</h1>
+	<h1 class="text-5xl font-bold mb-2">📚 Emojibrary</h1>
 	<p class="text-lg opacity-70">{subtitle}</p>
 	<Breadcrumbs />
 </header>
