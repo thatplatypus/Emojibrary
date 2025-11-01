@@ -5,9 +5,10 @@
 	let emojis: Emoji[] = [];
 	let searchQuery = $state('');
 	let selectedCategory = $state<string | null>(null);
-	let categories: string[] = [];
+	let showModifiers = $state(false);
+	let categories = $state<string[]>([]);
 	let loading = $state(true);
-	let error: string | null = null;
+	let error = $state<string | null>(null);
 
 	onMount(async () => {
 		try {
@@ -25,8 +26,21 @@
 		}
 	});
 
+	const isModifier = (emoji: Emoji): boolean => {
+		if (emoji.status === 'component' || emoji.group === 'Component') {
+			return true;
+		}
+		
+		const skinToneModifiers = ['1F3FB', '1F3FC', '1F3FD', '1F3FE', '1F3FF'];
+		return emoji.codepoints.some((cp) => skinToneModifiers.includes(cp));
+	};
+
 	const filteredEmojis = $derived(() => {
 		let filtered = emojis;
+
+		if (!showModifiers) {
+			filtered = filtered.filter((e) => !isModifier(e));
+		}
 
 		if (selectedCategory) {
 			filtered = filtered.filter((e) => e.group === selectedCategory);
@@ -45,6 +59,11 @@
 
 		return filtered;
 	});
+
+	const getCategoryEmoji = (category: string): string => {
+		const categoryEmojis = emojis.filter((e) => e.group === category && !isModifier(e));
+		return categoryEmojis[0]?.char || '📁';
+	};
 </script>
 
 <div class="min-h-screen bg-base-100">
@@ -64,6 +83,18 @@
 				/>
 			</div>
 
+			<div class="mb-6">
+				<form class="flex flex-wrap gap-2 items-center">
+					<input
+						class="btn"
+						type="checkbox"
+						name="filters"
+						aria-label="Show Modifiers"
+						bind:checked={showModifiers}
+					/>
+				</form>
+			</div>
+
 			<div class="mb-6 flex flex-wrap gap-2">
 				<button
 					class="btn btn-sm {selectedCategory === null ? 'btn-primary' : 'btn-outline'}"
@@ -72,14 +103,16 @@
 					All
 				</button>
 				{#each categories as category}
-					<button
-						class="btn btn-sm {selectedCategory === category
-							? 'btn-primary'
-							: 'btn-outline'}"
-						onclick={() => (selectedCategory = category)}
-					>
-						{category}
-					</button>
+					<div class="tooltip" data-tip={category}>
+						<button
+							class="btn btn-sm {selectedCategory === category
+								? 'btn-primary'
+								: 'btn-outline'}"
+							onclick={() => (selectedCategory = category)}
+						>
+							{getCategoryEmoji(category)}
+						</button>
+					</div>
 				{/each}
 			</div>
 
