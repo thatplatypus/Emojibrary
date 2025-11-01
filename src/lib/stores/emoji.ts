@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import { browser, dev } from '$app/environment';
 import type { Emoji } from '../types/emoji';
 
 export const emojis = writable<Emoji[]>([]);
@@ -7,6 +8,12 @@ export const error = writable<string | null>(null);
 
 let emojiDataLoaded = false;
 
+const getBasePath = (): string => {
+	if (!browser) return '';
+	if (dev) return '';
+	return '/Emojibrary';
+};
+
 export async function loadEmojis(): Promise<void> {
 	if (emojiDataLoaded) return;
 
@@ -14,7 +21,8 @@ export async function loadEmojis(): Promise<void> {
 	error.set(null);
 
 	try {
-		const response = await fetch('/data/emoji_unicode_17_data.json');
+		const basePath = getBasePath();
+		const response = await fetch(`${basePath}/data/emoji_unicode_17_data_with_descriptions.json`);
 		if (!response.ok) {
 			throw new Error('Failed to load emoji data');
 		}
