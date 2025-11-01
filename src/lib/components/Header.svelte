@@ -4,17 +4,17 @@
 
 	let { subtitle = 'A fun and fresh emoji search & browser' } = $props();
 
-	const isDark = $derived($theme === 'dark');
+	const isNight = $derived($theme === 'night');
 
 	const toggleTheme = () => {
-		theme.set(isDark ? 'light' : 'dark');
+		theme.set(isNight ? 'winter' : 'night');
 	};
 </script>
 
 <header class="text-center mb-8">
 	<div class="flex justify-end mb-4">
 		<label class="swap swap-rotate">
-			<input type="checkbox" checked={isDark} onchange={toggleTheme} />
+			<input type="checkbox" checked={isNight} onchange={toggleTheme} />
 			<svg
 				class="swap-on h-6 w-6 fill-current"
 				xmlns="http://www.w3.org/2000/svg"
