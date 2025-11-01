@@ -4,6 +4,8 @@
 	import type { Emoji } from '$lib/types/emoji';
 	import Header from '$lib/components/Header.svelte';
 	import { base } from '$app/paths';
+	// @ts-ignore - VirtualList doesn't have type definitions
+	import VirtualList from '@sveltejs/svelte-virtual-list';
 
 	let searchQuery = $state('');
 	let selectedCategory = $state<string | null>(null);
@@ -96,45 +98,56 @@
 		const categoryEmojis = $emojis.filter((e) => e.group === category && !isModifier(e));
 		return categoryEmojis[0]?.char || '📁';
 	};
+
+	const emojiRows = $derived(() => {
+		const emojis = filteredEmojis();
+		const itemsPerRow = 8;
+		return [...Array(Math.ceil(emojis.length / itemsPerRow)).keys()];
+	});
 </script>
 
-<div class="min-h-screen bg-base-100">
-	<div class="container mx-auto px-4 py-8">
-		<Header />
+<div class="flex flex-col h-screen bg-base-100 overflow-hidden">
+	<div class="flex-shrink-0">
+		<div class="container mx-auto px-4 py-4">
+			<Header />
+		</div>
+	</div>
 
-		<div class="max-w-4xl mx-auto">
-			<div class="mb-6">
-				<input
-					type="text"
-					placeholder="Search emojis..."
-					bind:value={searchQuery}
-					class="input input-primary w-full text-lg"
-				/>
-			</div>
+	<div class="flex-1 overflow-hidden">
+		<div class="container mx-auto px-4 pb-4 h-full">
+			<div class="max-w-4xl mx-auto h-full flex flex-col">
+				<div class="flex-shrink-0 mb-4">
+					<input
+						type="text"
+						placeholder="Search emojis..."
+						bind:value={searchQuery}
+						class="input input-primary w-full text-lg"
+					/>
+				</div>
 
-			<div class="mb-6 flex flex-wrap gap-2 justify-between">
-				<button
-					class="btn btn-lg {selectedCategory === null ? 'btn-primary' : 'btn-outline'}"
-					onclick={() => (selectedCategory = null)}
-				>
-					All
-				</button>
-				{#each categories() as category}
-					<div class="tooltip" data-tip={category}>
-						<button
-							class="btn btn-lg {selectedCategory === category
-								? 'btn-primary'
-								: 'btn-outline btn-primary'}"
-							onclick={() => (selectedCategory = category)}
-						>
-							{getCategoryEmoji(category)}
-						</button>
-					</div>
-				{/each}
-			</div>
+				<div class="flex-shrink-0 mb-4 flex flex-wrap gap-2 justify-between">
+					<button
+						class="btn btn-lg {selectedCategory === null ? 'btn-primary' : 'btn-outline'}"
+						onclick={() => (selectedCategory = null)}
+					>
+						All
+					</button>
+					{#each categories() as category}
+						<div class="tooltip" data-tip={category}>
+							<button
+								class="btn btn-lg {selectedCategory === category
+									? 'btn-primary'
+									: 'btn-outline btn-primary'}"
+								onclick={() => (selectedCategory = category)}
+							>
+								{getCategoryEmoji(category)}
+							</button>
+						</div>
+					{/each}
+				</div>
 
-			<div class="mb-6 flex flex-wrap gap-4 items-center justify-between">
-				<form class="flex flex-wrap gap-2 items-center">
+				<div class="flex-shrink-0 mb-4 flex flex-wrap gap-4 items-center justify-between">
+					<form class="flex flex-wrap gap-2 items-center">
 					<input
 						class="btn"
 						type="checkbox"
@@ -142,46 +155,56 @@
 						aria-label="Show Modifiers"
 						bind:checked={showModifiers}
 					/>
-				</form>
+					</form>
 
-				<select
-					class="select"
-					onchange={handleVersionChange}
-				>
-					<option value="all" selected={selectedVersions.has('all')}>All Versions</option>
-					{#each emojiVersions() as version}
-						<option value={version} selected={selectedVersions.has(version)}>
-							Unicode {version}
-						</option>
-					{/each}
-				</select>
+					<select
+						class="select"
+						onchange={handleVersionChange}
+					>
+						<option value="all" selected={selectedVersions.has('all')}>All Versions</option>
+						{#each emojiVersions() as version}
+							<option value={version} selected={selectedVersions.has(version)}>
+								Unicode {version}
+							</option>
+						{/each}
+					</select>
+				</div>
+
+				<div class="flex-1 overflow-hidden flex flex-col">
+					{#if $loading}
+						<div class="text-center py-12">
+							<span class="loading loading-spinner loading-lg"></span>
+						</div>
+					{:else if $error}
+						<div class="alert alert-error">
+							<span>{$error}</span>
+						</div>
+					{:else}
+						<div class="flex-shrink-0 mb-2 text-sm opacity-70">
+							Found {filteredEmojis().length} emoji{filteredEmojis().length !== 1 ? 's' : ''}
+						</div>
+						<div class="flex-1 min-h-0">
+							<VirtualList height="100%" items={emojiRows()} itemHeight={140} let:item={row}>
+								<div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 mb-4">
+									{#each Array(8) as _, i}
+										{#if filteredEmojis()[row * 8 + i]}
+											{@const emoji = filteredEmojis()[row * 8 + i]}
+											<a
+												href="{base}/{encodeURIComponent(emoji.char)}"
+												class="card bg-base-200 hover:bg-base-300 transition-colors p-4 text-center cursor-pointer no-underline"
+												title="{emoji.name}"
+											>
+												<div class="text-4xl mb-2">{emoji.char}</div>
+												<div class="text-xs opacity-70 truncate">{emoji.name || 'Unnamed'}</div>
+											</a>
+										{/if}
+									{/each}
+								</div>
+							</VirtualList>
+						</div>
+					{/if}
+				</div>
 			</div>
-
-			{#if $loading}
-				<div class="text-center py-12">
-					<span class="loading loading-spinner loading-lg"></span>
-				</div>
-			{:else if $error}
-				<div class="alert alert-error">
-					<span>{$error}</span>
-				</div>
-			{:else}
-				<div class="mb-4 text-sm opacity-70">
-					Found {filteredEmojis().length} emoji{filteredEmojis().length !== 1 ? 's' : ''}
-				</div>
-				<div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
-					{#each filteredEmojis() as emoji}
-						<a
-							href="{base}/{encodeURIComponent(emoji.char)}"
-							class="card bg-base-200 hover:bg-base-300 transition-colors p-4 text-center cursor-pointer no-underline"
-							title="{emoji.name}"
-						>
-							<div class="text-4xl mb-2">{emoji.char}</div>
-							<div class="text-xs opacity-70 truncate">{emoji.name || 'Unnamed'}</div>
-						</a>
-					{/each}
-				</div>
-			{/if}
 		</div>
 	</div>
 </div>
