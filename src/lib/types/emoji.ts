@@ -8,5 +8,6 @@ export interface Emoji {
 	codepoints: string[];
 	sequence: string;
 	codepoint_count: number;
+	description?: string;
 }
 

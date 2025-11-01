@@ -1,29 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { emojis, loading, error, loadEmojis } from '$lib/stores/emoji';
 	import type { Emoji } from '$lib/types/emoji';
 
-	let emojis: Emoji[] = [];
 	let searchQuery = $state('');
 	let selectedCategory = $state<string | null>(null);
 	let showModifiers = $state(false);
-	let categories = $state<string[]>([]);
-	let loading = $state(true);
-	let error = $state<string | null>(null);
 
 	onMount(async () => {
-		try {
-			const response = await fetch('/data/emoji_unicode_17_data.json');
-			if (!response.ok) {
-				throw new Error('Failed to load emoji data');
-			}
-			const data = await response.json();
-			emojis = Array.isArray(data) ? data : [];
-			categories = [...new Set(emojis.map((e) => e.group))].sort();
-			loading = false;
-		} catch (err) {
-			error = err instanceof Error ? err.message : 'An error occurred';
-			loading = false;
-		}
+		await loadEmojis();
 	});
 
 	const isModifier = (emoji: Emoji): boolean => {
@@ -35,8 +20,12 @@
 		return emoji.codepoints.some((cp) => skinToneModifiers.includes(cp));
 	};
 
+	const categories = $derived(() => {
+		return [...new Set($emojis.map((e) => e.group))].sort();
+	});
+
 	const filteredEmojis = $derived(() => {
-		let filtered = emojis;
+		let filtered = $emojis;
 
 		if (!showModifiers) {
 			filtered = filtered.filter((e) => !isModifier(e));
@@ -61,7 +50,7 @@
 	});
 
 	const getCategoryEmoji = (category: string): string => {
-		const categoryEmojis = emojis.filter((e) => e.group === category && !isModifier(e));
+		const categoryEmojis = $emojis.filter((e) => e.group === category && !isModifier(e));
 		return categoryEmojis[0]?.char || '📁';
 	};
 </script>
@@ -102,7 +91,7 @@
 				>
 					All
 				</button>
-				{#each categories as category}
+				{#each categories() as category}
 					<div class="tooltip" data-tip={category}>
 						<button
 							class="btn btn-sm {selectedCategory === category
@@ -116,13 +105,13 @@
 				{/each}
 			</div>
 
-			{#if loading}
+			{#if $loading}
 				<div class="text-center py-12">
 					<span class="loading loading-spinner loading-lg"></span>
 				</div>
-			{:else if error}
+			{:else if $error}
 				<div class="alert alert-error">
-					<span>{error}</span>
+					<span>{$error}</span>
 				</div>
 			{:else}
 				<div class="mb-4 text-sm opacity-70">
@@ -130,16 +119,14 @@
 				</div>
 				<div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
 					{#each filteredEmojis() as emoji}
-						<button
-							class="card bg-base-200 hover:bg-base-300 transition-colors p-4 text-center cursor-pointer"
-							onclick={() => {
-								navigator.clipboard.writeText(emoji.char);
-							}}
+						<a
+							href="/{encodeURIComponent(emoji.char)}"
+							class="card bg-base-200 hover:bg-base-300 transition-colors p-4 text-center cursor-pointer no-underline"
 							title="{emoji.name}"
 						>
 							<div class="text-4xl mb-2">{emoji.char}</div>
 							<div class="text-xs opacity-70 truncate">{emoji.name || 'Unnamed'}</div>
-						</button>
+						</a>
 					{/each}
 				</div>
 			{/if}
