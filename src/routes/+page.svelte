@@ -1,0 +1,115 @@
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import type { Emoji } from '$lib/types/emoji';
+
+	let emojis: Emoji[] = [];
+	let searchQuery = $state('');
+	let selectedCategory = $state<string | null>(null);
+	let categories: string[] = [];
+	let loading = $state(true);
+	let error: string | null = null;
+
+	onMount(async () => {
+		try {
+			const response = await fetch('/data/emoji_unicode_17_data.json');
+			if (!response.ok) {
+				throw new Error('Failed to load emoji data');
+			}
+			const data = await response.json();
+			emojis = Array.isArray(data) ? data : [];
+			categories = [...new Set(emojis.map((e) => e.group))].sort();
+			loading = false;
+		} catch (err) {
+			error = err instanceof Error ? err.message : 'An error occurred';
+			loading = false;
+		}
+	});
+
+	const filteredEmojis = $derived(() => {
+		let filtered = emojis;
+
+		if (selectedCategory) {
+			filtered = filtered.filter((e) => e.group === selectedCategory);
+		}
+
+		if (searchQuery.trim()) {
+			const query = searchQuery.toLowerCase().trim();
+			filtered = filtered.filter((e) => {
+				const nameMatch = e.name?.toLowerCase().includes(query);
+				const groupMatch = e.group?.toLowerCase().includes(query);
+				const subgroupMatch = e.subgroup?.toLowerCase().includes(query);
+				const codeMatch = e.sequence?.toLowerCase().includes(query);
+				return nameMatch || groupMatch || subgroupMatch || codeMatch;
+			});
+		}
+
+		return filtered;
+	});
+</script>
+
+<div class="min-h-screen bg-base-100">
+	<div class="container mx-auto px-4 py-8">
+		<header class="text-center mb-8">
+			<h1 class="text-5xl font-bold mb-2">🎨 Emojibrary</h1>
+			<p class="text-lg opacity-70">A fun and fresh emoji search & browser</p>
+		</header>
+
+		<div class="max-w-4xl mx-auto">
+			<div class="mb-6">
+				<input
+					type="text"
+					placeholder="Search emojis..."
+					bind:value={searchQuery}
+					class="input input-bordered w-full text-lg"
+				/>
+			</div>
+
+			<div class="mb-6 flex flex-wrap gap-2">
+				<button
+					class="btn btn-sm {selectedCategory === null ? 'btn-primary' : 'btn-outline'}"
+					onclick={() => (selectedCategory = null)}
+				>
+					All
+				</button>
+				{#each categories as category}
+					<button
+						class="btn btn-sm {selectedCategory === category
+							? 'btn-primary'
+							: 'btn-outline'}"
+						onclick={() => (selectedCategory = category)}
+					>
+						{category}
+					</button>
+				{/each}
+			</div>
+
+			{#if loading}
+				<div class="text-center py-12">
+					<span class="loading loading-spinner loading-lg"></span>
+				</div>
+			{:else if error}
+				<div class="alert alert-error">
+					<span>{error}</span>
+				</div>
+			{:else}
+				<div class="mb-4 text-sm opacity-70">
+					Found {filteredEmojis().length} emoji{filteredEmojis().length !== 1 ? 's' : ''}
+				</div>
+				<div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+					{#each filteredEmojis() as emoji}
+						<button
+							class="card bg-base-200 hover:bg-base-300 transition-colors p-4 text-center cursor-pointer"
+							onclick={() => {
+								navigator.clipboard.writeText(emoji.char);
+							}}
+							title="{emoji.name}"
+						>
+							<div class="text-4xl mb-2">{emoji.char}</div>
+							<div class="text-xs opacity-70 truncate">{emoji.name || 'Unnamed'}</div>
+						</button>
+					{/each}
+				</div>
+			{/if}
+		</div>
+	</div>
+</div>

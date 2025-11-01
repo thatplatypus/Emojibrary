@@ -1,0 +1,16 @@
+# Place your emoji-data.json file here
+# Expected format:
+# {
+#   "emojis": [
+#     {
+#       "codePoint": "U+1F600",
+#       "category": "Smileys & Emotion",
+#       "subcategory": "face-smiling",
+#       "name": "grinning face",
+#       "keywords": ["face", "grin", "happy", "joy"]
+#     },
+#     ...
+#   ],
+#   "version": "Unicode 17"
+# }
+
