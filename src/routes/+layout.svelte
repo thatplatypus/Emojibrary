@@ -1,8 +1,21 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import favicon from '$lib/assets/favicon.svg';
 	import '../app.css';
+	import { theme } from '$lib/stores/theme';
+	import { browser } from '$app/environment';
 
 	let { children } = $props();
+
+	onMount(() => {
+		if (browser) {
+			document.documentElement.setAttribute('data-theme', $theme);
+			const unsubscribe = theme.subscribe((value) => {
+				document.documentElement.setAttribute('data-theme', value);
+			});
+			return unsubscribe;
+		}
+	});
 </script>
 
 <svelte:head>

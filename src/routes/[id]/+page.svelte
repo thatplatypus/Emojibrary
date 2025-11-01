@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { emojis, loading, loadEmojis } from '$lib/stores/emoji';
 	import type { Emoji } from '$lib/types/emoji';
+	import Header from '$lib/components/Header.svelte';
 
 	let emoji = $state<Emoji | null>(null);
 	let notFound = $state(false);
@@ -35,6 +36,8 @@
 
 <div class="min-h-screen bg-base-100">
 	<div class="container mx-auto px-4 py-8">
+		<Header />
+
 		<div class="max-w-2xl mx-auto">
 			{#if $loading}
 				<div class="text-center py-12">

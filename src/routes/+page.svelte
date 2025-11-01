@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { emojis, loading, error, loadEmojis } from '$lib/stores/emoji';
 	import type { Emoji } from '$lib/types/emoji';
+	import Header from '$lib/components/Header.svelte';
 
 	let searchQuery = $state('');
 	let selectedCategory = $state<string | null>(null);
@@ -57,10 +58,7 @@
 
 <div class="min-h-screen bg-base-100">
 	<div class="container mx-auto px-4 py-8">
-		<header class="text-center mb-8">
-			<h1 class="text-5xl font-bold mb-2">🎨 Emojibrary</h1>
-			<p class="text-lg opacity-70">A fun and fresh emoji search & browser</p>
-		</header>
+		<Header />
 
 		<div class="max-w-4xl mx-auto">
 			<div class="mb-6">
