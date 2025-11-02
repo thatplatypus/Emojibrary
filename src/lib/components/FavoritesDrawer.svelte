@@ -11,6 +11,8 @@
   let copiedChar = $state<string | null>(null);
   let drawerOpen = $state(false);
 
+  let { children } = $props();
+
   onMount(() => {
     // Load initial drawer state from localStorage
     try {
@@ -57,7 +59,7 @@
     bind:checked={drawerOpen}
   />
   <div class="drawer-content">
-    <slot />
+    {@render children?.()}
   </div>
   <div class="drawer-side h-full fixed is-drawer-close:overflow-visible">
     <label
@@ -69,7 +71,7 @@
       class="is-drawer-close:w-14 is-drawer-open:w-64 bg-base-200 flex flex-col items-start min-h-full h-full"
     >
       {#if hasFavorites}
-        <ul class="menu w-full grow px-0 py-2">
+        <ul class="menu w-full grow px-0 py-2 {!drawerOpen ? 'items-center' : ''}">
           {#each favoriteEmojis as emoji}
             <li>
               <div class="flex items-center gap-2 w-full">
