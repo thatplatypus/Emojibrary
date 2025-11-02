@@ -9,6 +9,7 @@
   import FavoritesDrawer from "$lib/components/FavoritesDrawer.svelte";
   import { Check, Icon, DocumentDuplicate, Heart, Home } from "svelte-hero-icons";
   import { favorites, toggleFavorite } from "$lib/stores/favorites";
+  import { setCursorEffect, clearCursorEffect, cursorEffectEmoji } from "$lib/stores/cursorEffect";
 
   let emoji = $state<Emoji | null>(null);
   let notFound = $state(false);
@@ -22,6 +23,11 @@
   const isFavorite = $derived.by(() => {
     if (!emoji) return false;
     return $favorites.includes(emoji.char);
+  });
+
+  const hasCursorEffect = $derived.by(() => {
+    if (!emoji) return false;
+    return $cursorEffectEmoji === emoji.char;
   });
 
   const findEmoji = () => {
@@ -167,6 +173,25 @@
                   {:else}
                     <Icon src={Heart} class="h-5 w-5" />
                   {/if}
+                </button>
+              </div>
+              <div class="tooltip" data-tip={hasCursorEffect ? "Remove Cursor Effect" : "Use Cursor Effect"}>
+                <button
+                  class="btn {hasCursorEffect ? 'btn-filled' : 'btn-outline'} btn-primary"
+                  aria-label={hasCursorEffect ? "Remove Cursor Effect" : "Use Cursor Effect"}
+                  onclick={() => {
+                    if (emoji) {
+                      if (hasCursorEffect) {
+                        clearCursorEffect();
+                      } else {
+                        setCursorEffect(emoji.char);
+                      }
+                    }
+                  }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 {hasCursorEffect ? 'fill-current' : ''}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                  </svg>
                 </button>
               </div>
             </div>
