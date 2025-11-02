@@ -73,14 +73,14 @@
 </header>
 
 <dialog bind:this={settingsModal} id="settings-modal" class="modal">
-	<div class="modal-box">
+	<div class="modal-box bg-transparent backdrop-blur-md border border-primary border-2">
 		<h3 class="font-bold text-lg mb-6">Settings</h3>
 		
 		<div class="mb-8">
 			<h4 class="font-semibold text-base mb-4">🎨 Theme Defaults</h4>
 			<div class="grid grid-cols-2 gap-6">
 				<div>
-					<div class="label">
+					<div class="label text-primary">
 						<Icon src={Sun} class="h-5 w-5 mr-1" />
 						<span class="label-text font-medium">Light Theme</span>
 					</div>
@@ -101,7 +101,7 @@
 					</div>
 				</div>
 				<div>
-					<div class="label">
+					<div class="label text-primary">
 						<Icon src={Moon} class="h-5 w-5 mr-1" />
 						<span class="label-text font-medium">Dark Theme</span>
 					</div>
