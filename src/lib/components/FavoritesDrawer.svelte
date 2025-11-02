@@ -131,7 +131,7 @@
         </div>
       {/if}
       <div
-        class="m-2 is-drawer-close:tooltip is-drawer-close:tooltip-right"
+        class="m-2 tooltip tooltip-right"
         data-tip={drawerOpen ? "Close" : "Open"}
       >
         <label
