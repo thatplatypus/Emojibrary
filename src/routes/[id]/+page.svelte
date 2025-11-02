@@ -7,7 +7,7 @@
   import type { Emoji } from "$lib/types/emoji";
   import Header from "$lib/components/Header.svelte";
   import FavoritesDrawer from "$lib/components/FavoritesDrawer.svelte";
-  import { Check, Icon, DocumentDuplicate, Heart } from "svelte-hero-icons";
+  import { Check, Icon, DocumentDuplicate, Heart, Home } from "svelte-hero-icons";
   import { favorites, toggleFavorite } from "$lib/stores/favorites";
 
   let emoji = $state<Emoji | null>(null);
@@ -65,9 +65,11 @@
           <p class="text-lg opacity-70 mb-6">
             The emoji you're looking for doesn't exist in our library.
           </p>
-          <button class="btn btn-primary" onclick={() => goto(`${base}/`)}>
-            Back to Home
-          </button>
+          <div class="tooltip" data-tip="Back to Home">
+            <button class="btn btn-primary" onclick={() => goto(`${base}/`)}>
+              <Icon src={Home} class="h-5 w-5" />
+            </button>
+          </div>
         </div>
       {:else}
         <div class="card bg-base-200 shadow-xl">
@@ -126,9 +128,11 @@
             {/if}
 
             <div class="card-actions justify-center mt-6">
-              <button class="btn btn-outline" onclick={() => goto(`${base}/`)}>
-                Back to Home
-              </button>
+              <div class="tooltip" data-tip="Back to Home">
+                <button class="btn btn-outline" onclick={() => goto(`${base}/`)}>
+                  <Icon src={Home} class="h-5 w-5" />
+                </button>
+              </div>
               <div class="tooltip" data-tip={copied ? "Copied!" : "Copy"}>
                 <button
                   class="btn btn-outline"
