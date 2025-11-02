@@ -6,13 +6,23 @@
   import { emojis, loading, loadEmojis } from "$lib/stores/emoji";
   import type { Emoji } from "$lib/types/emoji";
   import Header from "$lib/components/Header.svelte";
-  import { Check, Icon, DocumentDuplicate } from "svelte-hero-icons";
+  import FavoritesDrawer from "$lib/components/FavoritesDrawer.svelte";
+  import { Check, Icon, DocumentDuplicate, Heart } from "svelte-hero-icons";
+  import { favorites, toggleFavorite } from "$lib/stores/favorites";
 
   let emoji = $state<Emoji | null>(null);
   let notFound = $state(false);
   let copied = $state(false);
 
-  const emojiId = $derived(() => decodeURIComponent($page.params.id));
+  const emojiId = $derived(() => {
+    const id = $page.params.id;
+    return id ? decodeURIComponent(id) : '';
+  });
+  
+  const isFavorite = $derived.by(() => {
+    if (!emoji) return false;
+    return $favorites.includes(emoji.char);
+  });
 
   const findEmoji = () => {
     const found = $emojis.find((e) => e.char === emojiId());
@@ -25,9 +35,10 @@
     }
   };
 
-  onMount(async () => {
-    await loadEmojis();
-    findEmoji();
+  onMount(() => {
+    loadEmojis().then(() => {
+      findEmoji();
+    });
 
     const unsubscribe = emojis.subscribe(() => {
       findEmoji();
@@ -37,11 +48,12 @@
   });
 </script>
 
-<div class="min-h-screen bg-base-100">
-  <div class="container mx-auto px-4 py-8">
-    <Header />
+<FavoritesDrawer>
+  <div class="min-h-screen bg-base-100">
+    <div class="container mx-auto px-4 py-8">
+      <Header />
 
-    <div class="max-w-2xl mx-auto">
+      <div class="max-w-2xl mx-auto">
       {#if $loading}
         <div class="text-center py-12">
           <span class="loading loading-spinner loading-lg"></span>
@@ -121,11 +133,13 @@
                 <button
                   class="btn btn-outline"
                   onclick={async () => {
-                    await navigator.clipboard.writeText(emoji.char);
-                    copied = true;
-                    setTimeout(() => {
-                      copied = false;
-                    }, 2000);
+                    if (emoji) {
+                      await navigator.clipboard.writeText(emoji.char);
+                      copied = true;
+                      setTimeout(() => {
+                        copied = false;
+                      }, 2000);
+                    }
                   }}
                 >
                   <label class="swap swap-rotate">
@@ -135,10 +149,27 @@
                   </label>
                 </button>
               </div>
+              <div class="tooltip" data-tip={isFavorite ? "Unfavorite" : "Favorite"}>
+                <button
+                  class="btn {isFavorite ? 'btn-filled' : 'btn-outline'} btn-error"
+                  onclick={() => {
+                    if (emoji) {
+                      toggleFavorite(emoji.char);
+                    }
+                  }}
+                >
+                  {#if isFavorite}
+                    <Icon src={Heart} class="h-5 w-5 fill-pink-500" solid />
+                  {:else}
+                    <Icon src={Heart} class="h-5 w-5" />
+                  {/if}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       {/if}
     </div>
+    </div>
   </div>
-</div>
+</FavoritesDrawer>

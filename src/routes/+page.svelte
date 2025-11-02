@@ -4,6 +4,7 @@
 	import type { Emoji } from '$lib/types/emoji';
 	import Header from '$lib/components/Header.svelte';
 	import { base } from '$app/paths';
+	import FavoritesDrawer from '$lib/components/FavoritesDrawer.svelte';
 	// @ts-ignore - VirtualList doesn't have type definitions
 	import VirtualList from '@sveltejs/svelte-virtual-list';
 
@@ -106,16 +107,17 @@
 	});
 </script>
 
-<div class="flex flex-col h-screen bg-base-100 overflow-hidden">
-	<div class="flex-shrink-0">
-		<div class="container mx-auto px-4 py-4">
-			<Header />
+<FavoritesDrawer>
+	<div class="flex flex-col h-screen bg-base-100 overflow-hidden">
+		<div class="flex-shrink-0">
+			<div class="container mx-auto px-4 py-4">
+				<Header />
+			</div>
 		</div>
-	</div>
 
-	<div class="flex-1 overflow-hidden">
-		<div class="container mx-auto px-4 pb-4 h-full">
-			<div class="max-w-4xl mx-auto h-full flex flex-col">
+		<div class="flex-1 overflow-hidden">
+			<div class="container mx-auto px-4 pb-4 h-full">
+				<div class="max-w-4xl mx-auto h-full flex flex-col pt-4">
 				<div class="flex-shrink-0 mb-4">
 					<input
 						type="text"
@@ -204,7 +206,8 @@
 						</div>
 					{/if}
 				</div>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
+</FavoritesDrawer>
