@@ -8,15 +8,19 @@
 	const isDark = $derived($themeConfig.selected === $themeConfig.defaultDark);
 
 	const handleLightThemeChange = (themeName: string) => {
+		const currentConfig = $themeConfig;
+		const wasUsingLight = currentConfig.selected === currentConfig.defaultLight;
 		setDefaultLight(themeName);
-		if ($themeConfig.selected === $themeConfig.defaultLight) {
+		if (wasUsingLight) {
 			themeConfig.update((config) => ({ ...config, selected: themeName }));
 		}
 	};
 
 	const handleDarkThemeChange = (themeName: string) => {
+		const currentConfig = $themeConfig;
+		const wasUsingDark = currentConfig.selected === currentConfig.defaultDark;
 		setDefaultDark(themeName);
-		if ($themeConfig.selected === $themeConfig.defaultDark) {
+		if (wasUsingDark) {
 			themeConfig.update((config) => ({ ...config, selected: themeName }));
 		}
 	};
