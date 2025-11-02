@@ -1,4 +1,4 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-	themes: winter --default, night --prefersdark;
+	themes: winter --default, night --prefersdark, light, cupcake, bumblebee, emerald, valentine, fantasy, acid, caramellatte, nord, dark, synthwave, dim, forest, black, luxury, dracula, coffee, sunset;
 }

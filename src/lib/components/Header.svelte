@@ -1,14 +1,24 @@
 <script lang="ts">
-	import { theme } from '$lib/stores/theme';
+	import { themeConfig, toggleTheme, LIGHT_THEMES, DARK_THEMES, setDefaultLight, setDefaultDark } from '$lib/stores/theme';
 	import Breadcrumbs from './Breadcrumbs.svelte';
-	import { Icon, Cog6Tooth } from 'svelte-hero-icons';
+	import { Icon, Cog6Tooth, Sun, Moon } from 'svelte-hero-icons';
 
 	let { subtitle = 'A fun and fresh emoji search & browser' } = $props();
 
-	const isNight = $derived($theme === 'night');
+	const isDark = $derived($themeConfig.selected === $themeConfig.defaultDark);
 
-	const toggleTheme = () => {
-		theme.set(isNight ? 'winter' : 'night');
+	const handleLightThemeChange = (themeName: string) => {
+		setDefaultLight(themeName);
+		if ($themeConfig.selected === $themeConfig.defaultLight) {
+			themeConfig.update((config) => ({ ...config, selected: themeName }));
+		}
+	};
+
+	const handleDarkThemeChange = (themeName: string) => {
+		setDefaultDark(themeName);
+		if ($themeConfig.selected === $themeConfig.defaultDark) {
+			themeConfig.update((config) => ({ ...config, selected: themeName }));
+		}
 	};
 
 	let settingsModal: HTMLDialogElement;
@@ -25,7 +35,7 @@
 		</div>
 		<div class="flex gap-2">
 			<label class="swap swap-rotate">
-				<input type="checkbox" checked={isNight} onchange={toggleTheme} />
+				<input type="checkbox" checked={isDark} onchange={toggleTheme} />
 				<svg
 					class="swap-on h-6 w-6 fill-current"
 					xmlns="http://www.w3.org/2000/svg"
@@ -45,7 +55,7 @@
 					/>
 				</svg>
 			</label>
-			<div class="tooltip" data-tip="Settings">
+			<div class="tooltip tooltip-bottom" data-tip="Settings">
 				<button class="btn btn-ghost btn-circle" onclick={openSettings}>
 					<Icon src={Cog6Tooth} class="h-6 w-6" />
 				</button>
@@ -60,8 +70,55 @@
 
 <dialog bind:this={settingsModal} id="settings-modal" class="modal">
 	<div class="modal-box">
-		<h3 class="font-bold text-lg">Settings</h3>
-		<p class="py-4">Settings content will go here</p>
+		<h3 class="font-bold text-lg mb-6">Settings</h3>
+		
+		<div class="mb-8">
+			<h4 class="font-semibold text-base mb-4">🎨 Theme Defaults</h4>
+			<div class="grid grid-cols-2 gap-6">
+				<div>
+					<div class="label">
+						<Icon src={Sun} class="h-5 w-5 mr-1" />
+						<span class="label-text font-medium">Light Theme</span>
+					</div>
+					<div class="flex flex-col gap-2 mt-2">
+						{#each LIGHT_THEMES as themeName}
+							<label class="label cursor-pointer justify-start gap-2">
+								<input
+									type="radio"
+									name="defaultLight"
+									value={themeName}
+									class="radio radio-primary"
+									checked={$themeConfig.defaultLight === themeName}
+									onchange={() => handleLightThemeChange(themeName)}
+								/>
+								<span class="label-text">{themeName}</span>
+							</label>
+						{/each}
+					</div>
+				</div>
+				<div>
+					<div class="label">
+						<Icon src={Moon} class="h-5 w-5 mr-1" />
+						<span class="label-text font-medium">Dark Theme</span>
+					</div>
+					<div class="flex flex-col gap-2 mt-2">
+						{#each DARK_THEMES as themeName}
+							<label class="label cursor-pointer justify-start gap-2">
+								<input
+									type="radio"
+									name="defaultDark"
+									value={themeName}
+									class="radio radio-primary"
+									checked={$themeConfig.defaultDark === themeName}
+									onchange={() => handleDarkThemeChange(themeName)}
+								/>
+								<span class="label-text">{themeName}</span>
+							</label>
+						{/each}
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 	<form method="dialog" class="modal-backdrop">
 		<button>close</button>

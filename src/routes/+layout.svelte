@@ -10,7 +10,6 @@
 
 	onMount(() => {
 		if (browser) {
-			document.documentElement.setAttribute('data-theme', $theme);
 			const unsubscribe = theme.subscribe((value) => {
 				document.documentElement.setAttribute('data-theme', value);
 			});
