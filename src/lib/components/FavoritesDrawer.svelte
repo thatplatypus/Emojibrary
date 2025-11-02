@@ -51,7 +51,7 @@
   };
 </script>
 
-<div class="drawer drawer-open h-screen">
+<div class="drawer lg:drawer-open h-screen">
   <input
     id="favorites-drawer"
     type="checkbox"

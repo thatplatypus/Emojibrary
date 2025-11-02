@@ -261,9 +261,9 @@
 					/>
 				</div>
 
-				<div class="flex-shrink-0 mb-4 flex flex-wrap gap-2 justify-between">
+				<div class="flex-shrink-0 mb-4 flex flex-wrap gap-2 justify-start lg:justify-between">
 					<button
-						class="btn btn-lg {selectedCategory === null ? 'btn-primary' : 'btn-outline'}"
+						class="btn btn-md {selectedCategory === null ? 'btn-primary' : 'btn-outline'}"
 						onclick={() => (selectedCategory = null)}
 					>
 						All
@@ -271,7 +271,7 @@
 					{#each categories() as category}
 						<div class="tooltip" data-tip={category}>
 							<button
-								class="btn btn-lg {selectedCategory === category
+								class="btn btn-md {selectedCategory === category
 									? 'btn-primary'
 									: 'btn-outline btn-primary'}"
 								onclick={() => (selectedCategory = category)}
@@ -282,19 +282,22 @@
 					{/each}
 				</div>
 
-				<div class="flex-shrink-0 mb-4 flex flex-wrap gap-4 items-center justify-between">
-					<form class="flex flex-wrap gap-2 items-center">
-					<input
-						class="btn"
-						type="checkbox"
-						name="filters"
-						aria-label="Show Modifiers"
-						bind:checked={showModifiers}
-					/>
+				<div class="flex-shrink-0 mb-4 flex flex-wrap gap-2 items-center">
+					<form class="flex items-center">
+						<label class="label cursor-pointer gap-2">
+							<input
+								class="checkbox"
+								type="checkbox"
+								name="filters"
+								aria-label="Show Modifiers"
+								bind:checked={showModifiers}
+							/>
+							<span class="label-text">Show Modifiers</span>
+						</label>
 					</form>
 
 					<select
-						class="select"
+						class="select flex-1 sm:flex-initial"
 						onchange={handleVersionChange}
 					>
 						<option value="all" selected={selectedVersions.has('all')}>All Versions</option>
