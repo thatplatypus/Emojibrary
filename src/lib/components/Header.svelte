@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { theme } from '$lib/stores/theme';
 	import Breadcrumbs from './Breadcrumbs.svelte';
+	import { Icon, Cog6Tooth } from 'svelte-hero-icons';
 
 	let { subtitle = 'A fun and fresh emoji search & browser' } = $props();
 
@@ -9,10 +10,16 @@
 	const toggleTheme = () => {
 		theme.set(isNight ? 'winter' : 'night');
 	};
+
+	let settingsModal: HTMLDialogElement;
+
+	const openSettings = () => {
+		settingsModal?.showModal();
+	};
 </script>
 
 <header class="text-center mb-8">
-	<div class="flex justify-end mb-4">
+	<div class="flex justify-end gap-2 mb-4">
 		<label class="swap swap-rotate">
 			<input type="checkbox" checked={isNight} onchange={toggleTheme} />
 			<svg
@@ -34,9 +41,24 @@
 				/>
 			</svg>
 		</label>
+		<div class="tooltip" data-tip="Settings">
+			<button class="btn btn-ghost btn-circle" onclick={openSettings}>
+				<Icon src={Cog6Tooth} class="h-6 w-6" />
+			</button>
+		</div>
 	</div>
 	<h1 class="text-5xl font-bold mb-2">📚 Emojibrary</h1>
 	<p class="text-lg opacity-70">{subtitle}</p>
 	<Breadcrumbs />
 </header>
+
+<dialog bind:this={settingsModal} id="settings-modal" class="modal">
+	<div class="modal-box">
+		<h3 class="font-bold text-lg">Settings</h3>
+		<p class="py-4">Settings content will go here</p>
+	</div>
+	<form method="dialog" class="modal-backdrop">
+		<button>close</button>
+	</form>
+</dialog>
 
