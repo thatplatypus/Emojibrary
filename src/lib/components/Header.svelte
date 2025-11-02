@@ -1,156 +1,214 @@
 <script lang="ts">
-	import { themeConfig, toggleTheme, LIGHT_THEMES, DARK_THEMES, setDefaultLight, setDefaultDark } from '$lib/stores/theme';
-	import { cursorEffectEmoji, clearCursorEffect } from '$lib/stores/cursorEffect';
-	import Breadcrumbs from './Breadcrumbs.svelte';
-	import { Icon, Cog6Tooth, Sun, Moon, CursorArrowRays } from 'svelte-hero-icons';
+  import {
+    themeConfig,
+    toggleTheme,
+    LIGHT_THEMES,
+    DARK_THEMES,
+    setDefaultLight,
+    setDefaultDark,
+  } from "$lib/stores/theme";
+  import {
+    cursorEffectEmoji,
+    cursorEffectStyle,
+    clearCursorEffect,
+    setCursorEffectStyle,
+  } from "$lib/stores/cursorEffect";
+  import Breadcrumbs from "./Breadcrumbs.svelte";
+  import {
+    Icon,
+    Cog6Tooth,
+    Sun,
+    Moon,
+  } from "svelte-hero-icons";
 
-	let { subtitle = 'A fun and fresh emoji search & browser' } = $props();
+  let { subtitle = "A fun and fresh emoji search & browser" } = $props();
 
-	const isDark = $derived($themeConfig.selected === $themeConfig.defaultDark);
+  const isDark = $derived($themeConfig.selected === $themeConfig.defaultDark);
 
-	const handleLightThemeChange = (themeName: string) => {
-		const currentConfig = $themeConfig;
-		const wasUsingLight = currentConfig.selected === currentConfig.defaultLight;
-		setDefaultLight(themeName);
-		if (wasUsingLight) {
-			themeConfig.update((config) => ({ ...config, selected: themeName }));
-		}
-	};
+  const handleLightThemeChange = (themeName: string) => {
+    const currentConfig = $themeConfig;
+    const wasUsingLight = currentConfig.selected === currentConfig.defaultLight;
+    setDefaultLight(themeName);
+    if (wasUsingLight) {
+      themeConfig.update((config) => ({ ...config, selected: themeName }));
+    }
+  };
 
-	const handleDarkThemeChange = (themeName: string) => {
-		const currentConfig = $themeConfig;
-		const wasUsingDark = currentConfig.selected === currentConfig.defaultDark;
-		setDefaultDark(themeName);
-		if (wasUsingDark) {
-			themeConfig.update((config) => ({ ...config, selected: themeName }));
-		}
-	};
+  const handleDarkThemeChange = (themeName: string) => {
+    const currentConfig = $themeConfig;
+    const wasUsingDark = currentConfig.selected === currentConfig.defaultDark;
+    setDefaultDark(themeName);
+    if (wasUsingDark) {
+      themeConfig.update((config) => ({ ...config, selected: themeName }));
+    }
+  };
 
-	let settingsModal: HTMLDialogElement;
+  let settingsModal: HTMLDialogElement;
 
-	const openSettings = () => {
-		settingsModal?.showModal();
-	};
+  const openSettings = () => {
+    settingsModal?.showModal();
+  };
 </script>
 
 <header class="mb-8">
-	<div class="flex justify-between items-center mb-4">
-		<div class="flex-1 flex items-center gap-2">
-			<label for="favorites-drawer" class="btn btn-ghost btn-circle lg:hidden drawer-button" aria-label="Toggle favorites menu">
-				<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-				</svg>
-			</label>
-			<Breadcrumbs />
-		</div>
-		<div class="flex gap-2">
-			<label class="swap swap-rotate">
-				<input type="checkbox" checked={isDark} onchange={toggleTheme} />
-				<svg
-					class="swap-on h-6 w-6 fill-current"
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 24 24"
-				>
-					<path
-						d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"
-					/>
-				</svg>
-				<svg
-					class="swap-off h-6 w-6 fill-current"
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 24 24"
-				>
-					<path
-						d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"
-					/>
-				</svg>
-			</label>
-			<div class="tooltip tooltip-bottom" data-tip="Settings">
-				<button class="btn btn-ghost btn-circle" onclick={openSettings}>
-					<Icon src={Cog6Tooth} class="h-6 w-6" />
-				</button>
-			</div>
-		</div>
-	</div>
-	<div class="text-center">
-		<h1 class="text-5xl font-bold mb-2">📚 Emojibrary</h1>
-		<p class="text-lg opacity-70">{subtitle}</p>
-	</div>
+  <div class="flex justify-between items-center mb-4">
+    <div class="flex-1 flex items-center gap-2">
+      <label
+        for="favorites-drawer"
+        class="btn btn-ghost btn-circle lg:hidden drawer-button"
+        aria-label="Toggle favorites menu"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </label>
+      <Breadcrumbs />
+    </div>
+    <div class="flex gap-2">
+      <label class="swap swap-rotate">
+        <input type="checkbox" checked={isDark} onchange={toggleTheme} />
+        <svg
+          class="swap-on h-6 w-6 fill-current"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"
+          />
+        </svg>
+        <svg
+          class="swap-off h-6 w-6 fill-current"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"
+          />
+        </svg>
+      </label>
+      <div class="tooltip tooltip-bottom" data-tip="Settings">
+        <button class="btn btn-ghost btn-circle" onclick={openSettings}>
+          <Icon src={Cog6Tooth} class="h-6 w-6" />
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="text-center">
+    <h1 class="text-5xl font-bold mb-2">📚 Emojibrary</h1>
+    <p class="text-lg opacity-70">{subtitle}</p>
+  </div>
 </header>
 
 <dialog bind:this={settingsModal} id="settings-modal" class="modal">
-	<div class="modal-box bg-transparent backdrop-blur-md border border-primary border-2">
-		<h3 class="font-bold text-lg mb-6">Settings</h3>
-		
-		<div class="mb-8">
-			<h4 class="font-semibold text-base mb-4">🎨 Theme Defaults</h4>
-			<div class="grid grid-cols-2 gap-6">
-				<div>
-					<div class="label text-primary">
-						<Icon src={Sun} class="h-5 w-5 mr-1" />
-						<span class="label-text font-medium">Light Theme</span>
-					</div>
-					<div class="flex flex-col gap-2 mt-2">
-						{#each LIGHT_THEMES as themeName}
-							<label class="label cursor-pointer justify-start gap-2">
-								<input
-									type="radio"
-									name="defaultLight"
-									value={themeName}
-									class="radio radio-primary"
-									checked={$themeConfig.defaultLight === themeName}
-									onchange={() => handleLightThemeChange(themeName)}
-								/>
-								<span class="label-text">{themeName}</span>
-							</label>
-						{/each}
-					</div>
-				</div>
-				<div>
-					<div class="label text-primary">
-						<Icon src={Moon} class="h-5 w-5 mr-1" />
-						<span class="label-text font-medium">Dark Theme</span>
-					</div>
-					<div class="flex flex-col gap-2 mt-2">
-						{#each DARK_THEMES as themeName}
-							<label class="label cursor-pointer justify-start gap-2">
-								<input
-									type="radio"
-									name="defaultDark"
-									value={themeName}
-									class="radio radio-primary"
-									checked={$themeConfig.defaultDark === themeName}
-									onchange={() => handleDarkThemeChange(themeName)}
-								/>
-								<span class="label-text">{themeName}</span>
-							</label>
-						{/each}
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		<div class="mb-8">
-			<h4 class="font-semibold text-base mb-4">🖱 Cursor Settings</h4>
-			<div class="flex items-center justify-between gap-4">
-				<div class="flex items-center gap-2">
-					{#if $cursorEffectEmoji}
-						<span class="text-2xl">{$cursorEffectEmoji}</span>
-						<span class="label-text">Active cursor effect</span>
-					{:else}
-						<span class="label-text opacity-70">No active effect</span>
-					{/if}
-				</div>
-				{#if $cursorEffectEmoji}
-					<button class="btn btn-sm btn-ghost" onclick={clearCursorEffect}>
-						Clear
-					</button>
-				{/if}
-			</div>
-		</div>
-	</div>
-	<form method="dialog" class="modal-backdrop">
-		<button>close</button>
-	</form>
-</dialog>
+  <div
+    class="modal-box bg-transparent backdrop-blur-md border border-primary border-2"
+  >
+    <h2 class="font-bold text-lg mb-6">Settings</h2>
 
+    <div class="mb-8">
+      <h3 class="font-semibold text-base mb-4">🎨 Theme Defaults</h3>
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <div class="label text-primary">
+            <Icon src={Sun} class="h-5 w-5 mr-1" />
+            <h4 class="label-text font-medium">Light Theme</h4>
+          </div>
+          <div class="flex flex-col gap-2 mt-2">
+            {#each LIGHT_THEMES as themeName}
+              <label class="label cursor-pointer justify-start gap-2">
+                <input
+                  type="radio"
+                  name="defaultLight"
+                  value={themeName}
+                  class="radio radio-primary"
+                  checked={$themeConfig.defaultLight === themeName}
+                  onchange={() => handleLightThemeChange(themeName)}
+                />
+                <span class="label-text">{themeName}</span>
+              </label>
+            {/each}
+          </div>
+        </div>
+        <div>
+          <div class="label text-primary">
+            <Icon src={Moon} class="h-5 w-5 mr-1" />
+            <h4 class="label-text font-medium">Dark Theme</h4>
+          </div>
+          <div class="flex flex-col gap-2 mt-2">
+            {#each DARK_THEMES as themeName}
+              <label class="label cursor-pointer justify-start gap-2">
+                <input
+                  type="radio"
+                  name="defaultDark"
+                  value={themeName}
+                  class="radio radio-primary"
+                  checked={$themeConfig.defaultDark === themeName}
+                  onchange={() => handleDarkThemeChange(themeName)}
+                />
+                <span class="label-text">{themeName}</span>
+              </label>
+            {/each}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-8">
+      <h4 class="font-semibold text-base mb-4">🖱 Cursor Settings</h4>
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center">
+          <span>✨ Cursor effect</span>
+          <div class="join ml-auto">
+            <button
+              class="join-item btn btn-sm {$cursorEffectStyle === 'rain'
+                ? 'btn-primary'
+                : 'btn-outline'}"
+              type="button"
+              onclick={() => setCursorEffectStyle("rain")}
+            >
+              Rain
+            </button>
+            <button
+              class="join-item btn btn-sm {$cursorEffectStyle === 'elastic'
+                ? 'btn-primary'
+                : 'btn-outline'}"
+              type="button"
+              onclick={() => setCursorEffectStyle("elastic")}
+            >
+              Elastic
+            </button>
+          </div>
+        </div>
+        <div class="flex items-center justify-between gap-4">
+          <div class="flex items-center gap-2">
+            {#if $cursorEffectEmoji}
+              <span class="text-2xl">{$cursorEffectEmoji}</span>
+              <span class="label-text">Active effect emoji</span>
+            {:else}
+              <span class="label-text opacity-70">No active effect</span>
+            {/if}
+          </div>
+          {#if $cursorEffectEmoji}
+            <button class="btn btn-sm btn-outline" onclick={clearCursorEffect}>
+              Clear effect
+            </button>
+          {/if}
+        </div>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
