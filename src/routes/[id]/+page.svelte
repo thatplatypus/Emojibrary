@@ -52,6 +52,13 @@
 
     return unsubscribe;
   });
+
+  $effect(() => {
+    const id = emojiId();
+    if ($emojis.length > 0 && id) {
+      findEmoji();
+    }
+  });
 </script>
 
 <FavoritesDrawer>
