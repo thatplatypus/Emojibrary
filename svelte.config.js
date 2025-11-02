@@ -7,7 +7,7 @@ const config = {
 
 	kit: {
 		adapter: adapter({
-			fallback: undefined
+			fallback: 'index.html'
 		}),
 		paths: {
 			base: '/Emojibrary'

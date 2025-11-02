@@ -12,6 +12,19 @@
       const unsubscribe = theme.subscribe((value) => {
         document.documentElement.setAttribute("data-theme", value);
       });
+
+      // Register service worker
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+          .register(`${base}/service-worker.js`)
+          .then((registration) => {
+            console.log('Service worker registered:', registration);
+          })
+          .catch((error) => {
+            console.error('Service worker registration failed:', error);
+          });
+      }
+
       return unsubscribe;
     }
   });

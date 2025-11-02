@@ -1,0 +1,32 @@
+{
+  "name": "Emojibrary",
+  "short_name": "Emojibrary",
+  "description": "A fun and fresh emoji search and browser app",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "logo_192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo_256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "logo_512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "logo_1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ]
+}
+
