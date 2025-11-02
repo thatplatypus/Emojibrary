@@ -18,7 +18,7 @@
 </script>
 
 {#if !isHome}
-  <div class="breadcrumbs mb-4">
+  <div class="breadcrumbs">
     <ul>
 			<li>
 				<a href="{base}/" class="flex items-center gap-2">
