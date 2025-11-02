@@ -6,6 +6,7 @@
 	import { base } from '$app/paths';
 	import FavoritesDrawer from '$lib/components/FavoritesDrawer.svelte';
 	import { favorites, toggleFavorite } from '$lib/stores/favorites';
+	import { setCursorEffect, clearCursorEffect, cursorEffectEmoji } from '$lib/stores/cursorEffect';
 	import { goto } from '$app/navigation';
 	// @ts-ignore - VirtualList doesn't have type definitions
 	import VirtualList from '@sveltejs/svelte-virtual-list';
@@ -176,8 +177,23 @@
 		}
 	};
 
+	const isFavoriteEmoji = (emoji: Emoji): boolean => {
+		return $favorites.includes(emoji.char);
+	};
+
+	const hasCursorEffect = (emoji: Emoji): boolean => {
+		return $cursorEffectEmoji === emoji.char;
+	};
+
 	const handleCursorEffect = () => {
-		closeContextMenu();
+		if (contextMenu.emoji) {
+			if (hasCursorEffect(contextMenu.emoji)) {
+				clearCursorEffect();
+			} else {
+				setCursorEffect(contextMenu.emoji.char);
+			}
+			closeContextMenu();
+		}
 	};
 
 	const handleShare = async () => {
@@ -190,10 +206,6 @@
 			}, 2000);
 			closeContextMenu();
 		}
-	};
-
-	const isFavoriteEmoji = (emoji: Emoji): boolean => {
-		return $favorites.includes(emoji.char);
 	};
 
 	$effect(() => {
@@ -376,11 +388,11 @@
 				</button>
 			</li>
 			<li>
-				<button class="btn btn-ghost btn-sm justify-start opacity-50" onclick={handleCursorEffect} disabled>
+				<button class="btn btn-ghost btn-sm justify-start {hasCursorEffect(contextMenu.emoji) ? 'btn-active' : ''}" onclick={handleCursorEffect}>
 					<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
 					</svg>
-					Cursor Effect
+					{hasCursorEffect(contextMenu.emoji) ? 'Remove Cursor Effect' : 'Cursor Effect'}
 				</button>
 			</li>
 			<li>

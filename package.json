@@ -31,6 +31,7 @@
 		"@sveltejs/svelte-virtual-list": "^3.0.1",
 		"@tailwindcss/cli": "^4.1.16",
 		"@tailwindcss/vite": "^4.1.16",
+		"cursor-effects": "^1.0.17",
 		"svelte-hero-icons": "^5.2.0"
 	}
 }

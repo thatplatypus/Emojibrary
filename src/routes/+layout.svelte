@@ -4,6 +4,7 @@
   import { theme } from "$lib/stores/theme";
   import { browser } from "$app/environment";
   import { base } from "$app/paths";
+  import { initializeCursorEffect } from "$lib/stores/cursorEffect";
 
   let { children } = $props();
 
@@ -12,6 +13,9 @@
       const unsubscribe = theme.subscribe((value) => {
         document.documentElement.setAttribute("data-theme", value);
       });
+
+      // Initialize cursor effect if one is stored
+      initializeCursorEffect();
 
       // Register service worker
       if ('serviceWorker' in navigator) {
