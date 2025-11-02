@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { themeConfig, toggleTheme, LIGHT_THEMES, DARK_THEMES, setDefaultLight, setDefaultDark } from '$lib/stores/theme';
+	import { cursorEffectEmoji, clearCursorEffect } from '$lib/stores/cursorEffect';
 	import Breadcrumbs from './Breadcrumbs.svelte';
-	import { Icon, Cog6Tooth, Sun, Moon } from 'svelte-hero-icons';
+	import { Icon, Cog6Tooth, Sun, Moon, CursorArrowRays } from 'svelte-hero-icons';
 
 	let { subtitle = 'A fun and fresh emoji search & browser' } = $props();
 
@@ -126,6 +127,25 @@
 						{/each}
 					</div>
 				</div>
+			</div>
+		</div>
+		
+		<div class="mb-8">
+			<h4 class="font-semibold text-base mb-4">🖱 Cursor Settings</h4>
+			<div class="flex items-center justify-between gap-4">
+				<div class="flex items-center gap-2">
+					{#if $cursorEffectEmoji}
+						<span class="text-2xl">{$cursorEffectEmoji}</span>
+						<span class="label-text">Active cursor effect</span>
+					{:else}
+						<span class="label-text opacity-70">No active effect</span>
+					{/if}
+				</div>
+				{#if $cursorEffectEmoji}
+					<button class="btn btn-sm btn-ghost" onclick={clearCursorEffect}>
+						Clear
+					</button>
+				{/if}
 			</div>
 		</div>
 	</div>

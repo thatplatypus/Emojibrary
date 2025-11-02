@@ -282,7 +282,7 @@
 					{/each}
 				</div>
 
-				<div class="flex-shrink-0 mb-4 flex flex-wrap gap-2 items-center">
+				<div class="flex-shrink-0 mb-4 flex flex-wrap gap-2 items-center justify-between">
 					<form class="flex items-center">
 						<label class="label cursor-pointer gap-2">
 							<input
